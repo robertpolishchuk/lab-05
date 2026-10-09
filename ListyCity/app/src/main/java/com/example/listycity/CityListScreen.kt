@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
@@ -26,11 +27,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.listycity.ui.theme.ListyCityTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import kotlin.text.isNotEmpty
 
 @Composable
 fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
+    onRemoveCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -155,7 +160,7 @@ fun CityListScreen(
                 }
             }
         }
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             itemsIndexed(cities) { index, city ->
                 CityRow(
                     city = city,
@@ -172,6 +177,19 @@ fun CityListScreen(
                     HorizontalDivider()
                 }
             }
+        }
+        if (selectedCity != null) {
+            Button(onClick = {
+                val cityToRemove = selectedCity
+                if (cityToRemove != null) {
+                    onRemoveCity(cityToRemove)
+                    selectedCity = null
+                    editedCityName = ""
+                    editedProvinceName = ""
+                }
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                modifier = Modifier.align(Alignment.End).padding(16.dp)
+            ) { Text("DELETE CITY") }
         }
     }
 }
@@ -213,7 +231,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onRemoveCity = {}
         )
     }
 }
